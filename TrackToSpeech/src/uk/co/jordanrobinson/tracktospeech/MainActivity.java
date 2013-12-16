@@ -10,6 +10,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity implements OnInitListener {
@@ -26,6 +27,12 @@ public class MainActivity extends Activity implements OnInitListener {
 			String artist = intent.getStringExtra("artist");
 			String track = intent.getStringExtra("track");
 			Log.d("TrTS track output", artist + " - " + track);
+			
+			TextView outputTextView = (TextView) ((Activity) context).findViewById(R.id.track_debug);
+			outputTextView.setText(artist + " - " + track);
+			tts.speak(artist + " " + track, TextToSpeech.QUEUE_FLUSH, null);
+			
+			
 		}
 	};
 	
