@@ -16,6 +16,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity implements OnInitListener {
 
 	private TextToSpeech tts;
+	private int initStatus;
 	
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
@@ -30,9 +31,9 @@ public class MainActivity extends Activity implements OnInitListener {
 			
 			TextView outputTextView = (TextView) ((Activity) context).findViewById(R.id.track_debug);
 			outputTextView.setText(artist + " - " + track);
-			tts.speak(artist + " " + track, TextToSpeech.QUEUE_FLUSH, null);
-			
-			
+			if (initStatus == TextToSpeech.SUCCESS) {			
+				tts.speak(artist + " " + track, TextToSpeech.QUEUE_FLUSH, null);
+			}			
 		}
 	};
 	
@@ -62,10 +63,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	
 	@Override
 	public void onInit(int initStatus) {
-		if (initStatus == TextToSpeech.SUCCESS) {
-			tts.speak("Hello world", TextToSpeech.QUEUE_FLUSH, null);
-		}
-		
+		this.initStatus = initStatus;		
 	}
 
 }
