@@ -10,6 +10,7 @@ TODO:
 - design a logo
 - check battery life usage
 - fix tts on pause as well as play
+- design/implement friendly open screen
 
 
 FINISHED:
