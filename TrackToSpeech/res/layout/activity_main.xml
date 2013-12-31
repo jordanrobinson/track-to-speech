@@ -9,8 +9,24 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/track_debug"
+        android:id="@+id/track_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:text="Nothing currently playing."
+        android:textSize="18sp" />
+
+    <ToggleButton
+        android:id="@+id/on_off_toggle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/track_view"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:textOn="Service On"
+        android:textOff="Service Off" />
 
 </RelativeLayout>

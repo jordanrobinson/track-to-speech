@@ -10,13 +10,16 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 
 public class MainActivity extends Activity implements OnInitListener {
 
 	private TextToSpeech tts;
 	private int initStatus;
+	TextView outputTextView;
 	
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
@@ -29,10 +32,9 @@ public class MainActivity extends Activity implements OnInitListener {
 			String track = intent.getStringExtra("track");
 			Log.d("TrTS track output", artist + " - " + track);
 			
-			TextView outputTextView = (TextView) ((Activity) context).findViewById(R.id.track_debug);
-			outputTextView.setText(artist + " - " + track);
+			outputTextView.setText(artist + " \n " + track);
 			if (initStatus == TextToSpeech.SUCCESS) {			
-				tts.speak(artist + " " + track, TextToSpeech.QUEUE_FLUSH, null);
+				tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
 			}			
 		}
 	};
@@ -40,9 +42,21 @@ public class MainActivity extends Activity implements OnInitListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//set overall layout
 		setContentView(R.layout.activity_main);
 		
-		IntentFilter intentFilter = new IntentFilter();
+		//set text view to show track and artist
+		outputTextView = (TextView) ((Activity) this).findViewById(R.id.track_view);
+		
+		//set toggle button for service
+	    ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
+	    toggleButton.setWidth((int) toggleButton.getPaint().measureText("Service Off") + 
+	    		toggleButton.getPaddingLeft() + toggleButton.getPaddingRight());
+	    toggleButton.setChecked(true);
+	    
+	    
+		
+		final IntentFilter intentFilter = new IntentFilter();
 		
 		intentFilter.addAction("com.android.music.metachanged");
 		intentFilter.addAction("com.android.music.playstatechanged");
@@ -50,6 +64,18 @@ public class MainActivity extends Activity implements OnInitListener {
 		intentFilter.addAction("com.android.music.queuechanged");
 		
 		registerReceiver(broadcastReceiver, intentFilter);
+		
+		toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					registerReceiver(broadcastReceiver, intentFilter);
+					outputTextView.setText("Waiting For Track");
+				} else {
+					unregisterReceiver(broadcastReceiver);
+					outputTextView.setText("Service Turned Off");
+				}
+			}
+		});
 		
 	}
 
