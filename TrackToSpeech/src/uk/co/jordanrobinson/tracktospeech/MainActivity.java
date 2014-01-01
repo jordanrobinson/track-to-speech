@@ -31,9 +31,15 @@ public class MainActivity extends Activity implements OnInitListener {
 			String track = intent.getStringExtra("track");
 			Log.d("TrTS track output", artist + " - " + track);
 
-			outputTextView.setText(artist + "\n" + track);
-			if (initStatus == TextToSpeech.SUCCESS) {			
-				tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
+			
+			if (!intent.getBooleanExtra("playing", false)) {
+				Log.d("TrTS", "Track seems paused.");
+			}
+			else {
+				outputTextView.setText(artist + "\n" + track);
+				if (initStatus == TextToSpeech.SUCCESS) {			
+					tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
+				}
 			}
 		}
 	};
@@ -47,8 +53,6 @@ public class MainActivity extends Activity implements OnInitListener {
 
 		intentFilter.addAction("com.android.music.metachanged");
 		intentFilter.addAction("com.android.music.playstatechanged");
-		intentFilter.addAction("com.android.music.playbackcomplete");
-		intentFilter.addAction("com.android.music.queuechanged");
 
 		registerReceiver(broadcastReceiver, intentFilter);
 
