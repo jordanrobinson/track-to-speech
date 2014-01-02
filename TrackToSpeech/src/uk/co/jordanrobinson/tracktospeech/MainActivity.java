@@ -1,5 +1,8 @@
 package uk.co.jordanrobinson.tracktospeech;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,21 +28,29 @@ public class MainActivity extends Activity implements OnInitListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
+
+		    Bundle bundle = intent.getExtras();
+		    if (bundle != null) {
+		        Set<String> keys = bundle.keySet();
+		        Iterator<String> it = keys.iterator();
+		        Log.e("bundle output", "Dumping Intent start");
+		        while (it.hasNext()) {
+		            String key = it.next();
+		            Log.e("bundle output", "[" + key + "=" + bundle.get(key)+"]");
+		        }
+		        Log.e("bundle output", "Dumping Intent end");
+		    }
+			
+			
 			String command = intent.getStringExtra("command");
 			Log.d("TrTS action output", action + " - " + command);
 			String artist = intent.getStringExtra("artist");
 			String track = intent.getStringExtra("track");
 			Log.d("TrTS track output", artist + " - " + track);
 
-			
-			if (!intent.getBooleanExtra("playing", false)) {
-				Log.d("TrTS", "Track seems paused.");
-			}
-			else {
-				outputTextView.setText(artist + "\n" + track);
-				if (initStatus == TextToSpeech.SUCCESS) {			
-					tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
-				}
+			outputTextView.setText(artist + "\n" + track);
+			if (initStatus == TextToSpeech.SUCCESS) {			
+				tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
 			}
 		}
 	};
