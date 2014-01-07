@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ public class MainActivity extends Activity implements OnInitListener {
 
 	private TextToSpeech tts;
 	private int initStatus;
+	private boolean enabled;
 	TextView outputTextView;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -43,7 +46,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			
 			
 			String command = intent.getStringExtra("command");
-			Log.d("TrTS action output", action + " - " + command);
+			Log.d("TrTS action output", action + " -  " + command);
 			String artist = intent.getStringExtra("artist");
 			String track = intent.getStringExtra("track");
 			Log.d("TrTS track output", artist + " - " + track);
@@ -90,12 +93,35 @@ public class MainActivity extends Activity implements OnInitListener {
 				if (isChecked) {
 					registerReceiver(broadcastReceiver, intentFilter); //we default to checked
 					outputTextView.setText("Waiting For Track");
+					enabled = true;
 				} else {
 					unregisterReceiver(broadcastReceiver);
 					outputTextView.setText("Service Turned Off");
+					enabled = false;
 				}
 			}
 		});
+		
+		displayNotifier();
+	}
+	
+	private void displayNotifier() {
+		
+		String contentText = "Service is currently running";
+		
+		if (!enabled) {
+			contentText = "Service is not running";
+		}
+		
+		NotificationCompat.Builder mBuilder =
+		        new NotificationCompat.Builder(this)
+		        .setSmallIcon(R.drawable.ic_launcher)
+		        .setContentTitle("Track to Speech")
+		        .setContentText(contentText);
+
+		NotificationManager mNotificationManager =
+		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(0, mBuilder.build());
 	}
 
 	@Override
