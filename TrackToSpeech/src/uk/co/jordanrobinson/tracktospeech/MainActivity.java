@@ -14,6 +14,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -23,7 +24,8 @@ public class MainActivity extends Activity implements OnInitListener {
 
 	private TextToSpeech tts;
 	private int initStatus;
-	private boolean enabled;
+	private boolean enabled = true;
+	private boolean playstate;
 	TextView outputTextView;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -32,19 +34,23 @@ public class MainActivity extends Activity implements OnInitListener {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
-		    Bundle bundle = intent.getExtras();
-		    if (bundle != null) {
-		        Set<String> keys = bundle.keySet();
-		        Iterator<String> it = keys.iterator();
-		        Log.e("bundle output", "Dumping Intent start");
-		        while (it.hasNext()) {
-		            String key = it.next();
-		            Log.e("bundle output", "[" + key + "=" + bundle.get(key)+"]");
-		        }
-		        Log.e("bundle output", "Dumping Intent end");
-		    }
-			
-			
+			Bundle bundle = intent.getExtras();
+			if (bundle != null) {
+				Set<String> keys = bundle.keySet();
+				Iterator<String> it = keys.iterator();
+				Log.d("bundle output", "Dumping Intent start");
+				while (it.hasNext()) {
+					String key = it.next();
+					Log.d("bundle output", "[" + key + "=" + bundle.get(key)+"]");
+				}
+				Log.d("bundle output", "Dumping Intent end");
+				
+				playstate = bundle.getBoolean("playstate");
+				
+				Log.d("playstate", playstate + "");
+			}
+
+
 			String command = intent.getStringExtra("command");
 			Log.d("TrTS action output", action + " -  " + command);
 			String artist = intent.getStringExtra("artist");
@@ -52,11 +58,18 @@ public class MainActivity extends Activity implements OnInitListener {
 			Log.d("TrTS track output", artist + " - " + track);
 
 			outputTextView.setText(artist + "\n" + track);
-			if (initStatus == TextToSpeech.SUCCESS) {			
+			if (initStatus == TextToSpeech.SUCCESS && playstate) {			
 				tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
 			}
 		}
 	};
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +94,7 @@ public class MainActivity extends Activity implements OnInitListener {
 
 		//set toggle button for service
 		ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
-		
+
 		//set width to the longest text width it can use (stops it resizing for different text)
 		toggleButton.setWidth((int) toggleButton.getPaint().measureText("Service Off") + 
 				toggleButton.getPaddingLeft() + toggleButton.getPaddingRight());
@@ -101,26 +114,26 @@ public class MainActivity extends Activity implements OnInitListener {
 				}
 			}
 		});
-		
+
 		displayNotifier();
 	}
-	
+
 	private void displayNotifier() {
-		
+
 		String contentText = "Service is currently running";
-		
+
 		if (!enabled) {
 			contentText = "Service is not running";
 		}
-		
+
 		NotificationCompat.Builder mBuilder =
-		        new NotificationCompat.Builder(this)
-		        .setSmallIcon(R.drawable.ic_launcher)
-		        .setContentTitle("Track to Speech")
-		        .setContentText(contentText);
+				new NotificationCompat.Builder(this)
+		.setSmallIcon(R.drawable.ic_launcher)
+		.setContentTitle("Track to Speech")
+		.setContentText(contentText);
 
 		NotificationManager mNotificationManager =
-		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(0, mBuilder.build());
 	}
 
