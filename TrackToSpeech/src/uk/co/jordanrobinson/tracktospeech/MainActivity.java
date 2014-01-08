@@ -38,27 +38,27 @@ public class MainActivity extends Activity implements OnInitListener {
 			if (bundle != null) {
 				Set<String> keys = bundle.keySet();
 				Iterator<String> it = keys.iterator();
-				Log.d("bundle output", "Dumping Intent start");
+				Log.d("TrTS bundle output", "Dumping Intent start");
 				while (it.hasNext()) {
 					String key = it.next();
-					Log.d("bundle output", "[" + key + "=" + bundle.get(key)+"]");
+					Log.d("TrTS bundle output", "[" + key + "=" + bundle.get(key)+"]");
 				}
-				Log.d("bundle output", "Dumping Intent end");
+				Log.d("TrTS bundle output", "Dumping Intent end");
 				
 				playstate = bundle.getBoolean("playstate");
 				
-				Log.d("playstate", playstate + "");
+				Log.d("TrTS playstate", playstate + "");
 			}
 
 
-			String command = intent.getStringExtra("command");
-			Log.d("TrTS action output", action + " -  " + command);
-			String artist = intent.getStringExtra("artist");
-			String track = intent.getStringExtra("track");
-			Log.d("TrTS track output", artist + " - " + track);
-
-			outputTextView.setText(artist + "\n" + track);
 			if (initStatus == TextToSpeech.SUCCESS && playstate) {			
+				String command = intent.getStringExtra("command");
+				Log.d("TrTS action output", action + " -  " + command);
+				String artist = intent.getStringExtra("artist");
+				String track = intent.getStringExtra("track");
+				Log.d("TrTS track output", artist + " - " + track);
+				
+				outputTextView.setText(artist + "\n" + track);
 				tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
 			}
 		}
