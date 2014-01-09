@@ -26,6 +26,8 @@ public class MainActivity extends Activity implements OnInitListener {
 	private int initStatus;
 	private boolean enabled = true;
 	private boolean playstate;
+	private String currentArtist = null;
+	private String currentTrack = null;
 	TextView outputTextView;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -44,22 +46,26 @@ public class MainActivity extends Activity implements OnInitListener {
 					Log.d("TrTS bundle output", "[" + key + "=" + bundle.get(key)+"]");
 				}
 				Log.d("TrTS bundle output", "Dumping Intent end");
-				
+
 				playstate = bundle.getBoolean("playstate");
-				
+
 				Log.d("TrTS playstate", playstate + "");
 			}
 
-
-			if (initStatus == TextToSpeech.SUCCESS && playstate) {			
-				String command = intent.getStringExtra("command");
-				Log.d("TrTS action output", action + " -  " + command);
+			if (initStatus == TextToSpeech.SUCCESS && playstate) { //TTS is initialised, and we're actually playing
+				String command = intent.getStringExtra("command"); //so log what's going on
 				String artist = intent.getStringExtra("artist");
 				String track = intent.getStringExtra("track");
 				Log.d("TrTS track output", artist + " - " + track);
-				
-				outputTextView.setText(artist + "\n" + track);
-				tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
+				Log.d("TrTS action output", action + " -  " + command);
+
+				if (!artist.equals(currentArtist) && !track.equals(currentTrack)) { //and if we haven't already
+					currentArtist = artist;
+					currentTrack = track;
+					
+					outputTextView.setText(artist + "\n" + track); //set the text and speak to the user
+					tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
+				}
 			}
 		}
 	};
@@ -86,7 +92,7 @@ public class MainActivity extends Activity implements OnInitListener {
 		tts = new TextToSpeech(this, this);
 
 		//setup of graphical components
-		//set overall layout
+		//set overall layout 
 		setContentView(R.layout.activity_main);
 
 		//set text view to show track and artist
@@ -128,7 +134,7 @@ public class MainActivity extends Activity implements OnInitListener {
 
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(this)
-		.setSmallIcon(R.drawable.ic_launcher)
+		.setSmallIcon(R.drawable.ic_stat_notify)
 		.setContentTitle("Track to Speech")
 		.setContentText(contentText);
 
