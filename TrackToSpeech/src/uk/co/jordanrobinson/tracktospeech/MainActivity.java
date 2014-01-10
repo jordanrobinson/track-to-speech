@@ -43,12 +43,12 @@ public class MainActivity extends Activity implements OnInitListener {
 				Log.d("TrTS bundle output", "Dumping Intent start");
 				while (it.hasNext()) {
 					String key = it.next();
-					Log.d("TrTS bundle output", "[" + key + "=" + bundle.get(key)+"]");
+					Log.d("TrTS bundle output", "[" + key + "=" + bundle.get(key)+ "]");
 				}
 				Log.d("TrTS bundle output", "Dumping Intent end");
-
-				playstate = bundle.getBoolean("playstate");
-
+				
+				//for our use, these are essentially the same
+				playstate = (bundle.getBoolean("playstate") || bundle.getBoolean("playing"));				
 				Log.d("TrTS playstate", playstate + "");
 			}
 

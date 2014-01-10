@@ -8,25 +8,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/track_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
-        android:text="Nothing currently playing."
-        android:textSize="18sp" />
-
     <ToggleButton
         android:id="@+id/on_off_toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/track_view"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:textOn="Service On"
-        android:textOff="Service Off" />
+        android:layout_marginBottom="165dp"
+        android:textOff="Service Off"
+        android:textOn="Service On" />
+
+    <TextView
+        android:id="@+id/track_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/on_off_toggle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="68dp"
+        android:gravity="center"
+        android:text="Nothing currently playing."
+        android:textSize="18sp" />
 
 </RelativeLayout>
