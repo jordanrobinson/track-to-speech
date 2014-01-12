@@ -5,6 +5,7 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.CompoundButton;
@@ -137,6 +139,15 @@ public class MainActivity extends Activity implements OnInitListener {
 		.setSmallIcon(R.drawable.ic_stat_notify)
 		.setContentTitle("Track to Speech")
 		.setContentText(contentText);
+				
+		Intent resultIntent = new Intent(this, MainActivity.class);
+		
+	    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+	    stackBuilder.addParentStack(MainActivity.class);
+	    stackBuilder.addNextIntent(resultIntent);
+	    PendingIntent resultPendingIntent =
+	            stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+	    mBuilder.setContentIntent(resultPendingIntent);
 
 		NotificationManager mNotificationManager =
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
