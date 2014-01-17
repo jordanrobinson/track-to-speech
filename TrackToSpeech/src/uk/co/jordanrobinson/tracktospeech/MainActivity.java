@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -28,9 +29,9 @@ public class MainActivity extends Activity implements OnInitListener {
 	private int initStatus;
 	private boolean enabled = true;
 	private boolean playstate;
-	private String currentArtist = null;
-	private String currentTrack = null;
-	TextView outputTextView;
+	private static String currentArtist = null;
+	private static String currentTrack = null;
+	private TextView outputTextView;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
@@ -48,7 +49,7 @@ public class MainActivity extends Activity implements OnInitListener {
 					Log.d("TrTS bundle output", "[" + key + "=" + bundle.get(key)+ "]");
 				}
 				Log.d("TrTS bundle output", "Dumping Intent end");
-				
+
 				//for our use, these are essentially the same
 				playstate = (bundle.getBoolean("playstate") || bundle.getBoolean("playing"));				
 				Log.d("TrTS playstate", playstate + "");
@@ -64,7 +65,7 @@ public class MainActivity extends Activity implements OnInitListener {
 				if (!artist.equals(currentArtist) && !track.equals(currentTrack)) { //and if we haven't already
 					currentArtist = artist;
 					currentTrack = track;
-					
+
 					outputTextView.setText(artist + "\n" + track); //set the text and speak to the user
 					tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
 				}
@@ -82,6 +83,7 @@ public class MainActivity extends Activity implements OnInitListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("TrTS", "Starting up...");
 
 		//setup of background components
 		final IntentFilter intentFilter = new IntentFilter();
@@ -126,6 +128,31 @@ public class MainActivity extends Activity implements OnInitListener {
 		displayNotifier();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d("TrTS", "onResume called...");
+		if (currentArtist != null && currentTrack != null) {
+			outputTextView.setText(currentArtist + "\n" + currentTrack);
+			Log.d("TrTS", "Setting text from last time");
+		}
+		else {
+			outputTextView.setText("Waiting For Track");
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		Log.d("TrTS", "OnNewIntent called...");
+		onResume();
+	}
+
 	private void displayNotifier() {
 
 		String contentText = "Service is currently running";
@@ -134,24 +161,38 @@ public class MainActivity extends Activity implements OnInitListener {
 			contentText = "Service is not running";
 		}
 
-		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(this)
+		Intent resultIntent = new Intent(this, NotificationActivity.class);		
+		
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 		.setSmallIcon(R.drawable.ic_stat_notify)
 		.setContentTitle("Track to Speech")
 		.setContentText(contentText);
-				
-		Intent resultIntent = new Intent(this, MainActivity.class);
-		
-	    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-	    stackBuilder.addParentStack(MainActivity.class);
-	    stackBuilder.addNextIntent(resultIntent);
-	    PendingIntent resultPendingIntent =
-	            stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-	    mBuilder.setContentIntent(resultPendingIntent);
 
-		NotificationManager mNotificationManager =
-				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(0, mBuilder.build());
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(NotificationActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+
+		PendingIntent resultPendingIntent = 
+				PendingIntent.getActivity(
+						this,
+						0,
+						resultIntent,
+						PendingIntent.FLAG_UPDATE_CURRENT
+						);
+		
+		mBuilder.setContentIntent(resultPendingIntent);
+		
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		
+		Notification notification = mBuilder.build();
+		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;;
+		notificationManager.notify(0, notification);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.d("TrTS", "onDestroy called...");
 	}
 
 	@Override

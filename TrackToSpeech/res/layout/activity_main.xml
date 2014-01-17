@@ -26,7 +26,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="68dp"
         android:gravity="center"
-        android:text="Nothing currently playing."
+        android:text="Waiting for new track"
         android:textSize="18sp" />
 
 </RelativeLayout>
