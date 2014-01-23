@@ -33,6 +33,8 @@ public class MainActivity extends Activity implements OnInitListener {
 	private static String currentTrack = null;
 	private TextView outputTextView;
 
+	private int numMessages;
+
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -62,7 +64,7 @@ public class MainActivity extends Activity implements OnInitListener {
 				Log.d("TrTS track output", artist + " - " + track);
 				Log.d("TrTS action output", action + " -  " + command);
 
-				if (!artist.equals(currentArtist) && !track.equals(currentTrack)) { //and if we haven't already
+				if (!artist.equals(currentArtist) && !track.equals(currentTrack)) { //if we haven't already
 					currentArtist = artist;
 					currentTrack = track;
 
@@ -84,6 +86,8 @@ public class MainActivity extends Activity implements OnInitListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d("TrTS", "Starting up...");
+
+		numMessages = 0;
 
 		//setup of background components
 		final IntentFilter intentFilter = new IntentFilter();
@@ -110,16 +114,30 @@ public class MainActivity extends Activity implements OnInitListener {
 				toggleButton.getPaddingLeft() + toggleButton.getPaddingRight());
 		toggleButton.setChecked(true);
 
+		final NotificationManager mNotificationManager =
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		final NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this);
+
 		//hook up button functionality
 		toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
 					registerReceiver(broadcastReceiver, intentFilter); //we default to checked
 					outputTextView.setText("Waiting For Track");
+
+					mNotifyBuilder.setContentText("Service is currently running")
+					.setNumber(++numMessages);
+					mNotificationManager.notify(0, mNotifyBuilder.build());
+
 					enabled = true;
 				} else {
 					unregisterReceiver(broadcastReceiver);
 					outputTextView.setText("Service Turned Off");
+
+					mNotifyBuilder.setContentText("Service is not running")
+					.setNumber(++numMessages);
+					mNotificationManager.notify(0, mNotifyBuilder.build());
+
 					enabled = false;
 				}
 			}
@@ -162,7 +180,7 @@ public class MainActivity extends Activity implements OnInitListener {
 		}
 
 		Intent resultIntent = new Intent(this, NotificationActivity.class);		
-		
+
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 		.setSmallIcon(R.drawable.ic_stat_notify)
 		.setContentTitle("Track to Speech")
@@ -179,11 +197,11 @@ public class MainActivity extends Activity implements OnInitListener {
 						resultIntent,
 						PendingIntent.FLAG_UPDATE_CURRENT
 						);
-		
+
 		mBuilder.setContentIntent(resultPendingIntent);
-		
+
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		
+
 		Notification notification = mBuilder.build();
 		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;;
 		notificationManager.notify(0, notification);
