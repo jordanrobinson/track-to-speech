@@ -39,6 +39,8 @@ public class MainActivity extends Activity implements OnInitListener {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.d("TrTS", "onRecieve Called...");
+			
 			String action = intent.getAction();
 
 			Bundle bundle = intent.getExtras();
@@ -64,13 +66,22 @@ public class MainActivity extends Activity implements OnInitListener {
 				Log.d("TrTS track output", artist + " - " + track);
 				Log.d("TrTS action output", action + " -  " + command);
 
-				if (!artist.equals(currentArtist) && !track.equals(currentTrack)) { //if we haven't already
+				if (!artist.equals(currentArtist) || !track.equals(currentTrack)) { //if we haven't already
 					currentArtist = artist;
 					currentTrack = track;
 
 					outputTextView.setText(artist + "\n" + track); //set the text and speak to the user
 					tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
+					Log.d("TrTS", "onRecieve success!");
 				}
+				else {
+					Log.d("TrTS", "onRecieve failed on artist comparison. Artist = " 
+				+ artist + " + " + currentArtist + " Track = " + track + " + " + currentTrack);
+				}
+			}
+			else {
+				Log.d("TrTS", "onRecieve failed on tts Success & playstate. Playstate = "
+			+ playstate + " tts = " + (initStatus == TextToSpeech.SUCCESS));
 			}
 		}
 	};
@@ -85,8 +96,8 @@ public class MainActivity extends Activity implements OnInitListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d("TrTS", "Starting up...");
-
+		Log.d("TrTS", "Starting up...");	
+		
 		numMessages = 0;
 
 		//setup of background components
