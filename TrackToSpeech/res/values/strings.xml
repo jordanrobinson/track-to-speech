@@ -4,5 +4,9 @@
     <string name="app_name">Track to Speech</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="text_default">Waiting for new track</string>
+    <!-- settings strings -->
+    <string name="pref_notify">Notification Icon</string>
+    <string name="pref_notify_summ">Shows a notification icon when the service is running</string>
 
 </resources>
