@@ -18,6 +18,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -34,6 +35,8 @@ public class MainActivity extends Activity implements OnInitListener {
 	private TextView outputTextView;
 
 	private int numMessages;
+	
+	private MenuItem settings;
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
@@ -89,7 +92,17 @@ public class MainActivity extends Activity implements OnInitListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
+		
+		settings = menu.add("Settings");
 		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.equals(settings)) {
+			Log.d("TrTS", "attempting init Settings");
+		}
 		return true;
 	}
 
@@ -138,7 +151,7 @@ public class MainActivity extends Activity implements OnInitListener {
 
 					mNotifyBuilder.setContentText("Service is currently running")
 					.setNumber(++numMessages);
-					mNotificationManager.notify(0, mNotifyBuilder.build());
+					mNotificationManager.notify(2, mNotifyBuilder.build());
 
 					enabled = true;
 				} else {
@@ -147,7 +160,7 @@ public class MainActivity extends Activity implements OnInitListener {
 
 					mNotifyBuilder.setContentText("Service is not running")
 					.setNumber(++numMessages);
-					mNotificationManager.notify(0, mNotifyBuilder.build());
+					mNotificationManager.notify(1, mNotifyBuilder.build());
 
 					enabled = false;
 				}
@@ -214,7 +227,7 @@ public class MainActivity extends Activity implements OnInitListener {
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
 		Notification notification = mBuilder.build();
-		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
 		notificationManager.notify(0, notification);
 	}
 
