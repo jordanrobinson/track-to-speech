@@ -203,7 +203,7 @@ public class MainActivity extends Activity implements OnInitListener {
 			contentText = "Service is not running";
 		}
 
-		Intent resultIntent = new Intent(this, NotificationActivity.class);		
+		Intent resultIntent = new Intent(this, MainActivity.class);		
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
 		.setSmallIcon(R.drawable.ic_stat_notify)
