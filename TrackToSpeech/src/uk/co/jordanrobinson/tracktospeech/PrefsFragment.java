@@ -1,15 +1,15 @@
 package uk.co.jordanrobinson.tracktospeech;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 
-public class PrefsActivity extends PreferenceActivity {
+public class PrefsFragment extends PreferenceFragment {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences); //needs changing
-		
+		addPreferencesFromResource(R.xml.preferences);
+
 	}
 
 }

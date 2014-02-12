@@ -26,7 +26,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="68dp"
         android:gravity="center"
-        android:text="Waiting for new track"
+        android:text="@string/text_default"
         android:textSize="18sp" />
 
 </RelativeLayout>

@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -24,7 +25,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 
-public class MainActivity extends Activity implements OnInitListener {
+public class MainActivity extends FragmentActivity implements OnInitListener {
 
 	private TextToSpeech tts;
 	private int initStatus;
@@ -36,8 +37,6 @@ public class MainActivity extends Activity implements OnInitListener {
 
 	private int numMessages;
 	
-	private MenuItem settings;
-
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -92,16 +91,18 @@ public class MainActivity extends Activity implements OnInitListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		
-		settings = menu.add("Settings");
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.equals(settings)) {
+		if (item.getTitle().equals("Settings")) {
+			
 			Log.d("TrTS", "attempting init Settings");
+	        getFragmentManager().beginTransaction()
+	        .replace(android.R.id.content, new PrefsFragment())
+	        .commit();
 		}
 		return true;
 	}
