@@ -60,7 +60,6 @@ public class MainActivity extends FragmentActivity {
 //
 //		tts = new TextToSpeech(this, this);
 		
-		
 		startService(new Intent(this, TrackToSpeechService.class));
 
 		//setup of graphical components
