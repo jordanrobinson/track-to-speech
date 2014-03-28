@@ -39,8 +39,8 @@ public class MainActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getTitle().equals("Settings")) {
 			Log.d("TrTS", "attempting init Settings");
-			Intent myIntent1 = new Intent(this, PrefsActivity.class);
-			startActivity(myIntent1);
+			Intent intent = new Intent(this, PrefsActivity.class);
+			startActivity(intent);
 		}
 		return true;
 	}

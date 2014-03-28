@@ -57,7 +57,7 @@ public class TrackToSpeechService extends Service implements OnInitListener {
 					currentArtist = artist;
 					currentTrack = track;
 
-//					outputTextView.setText(artist + "\n" + track); //set the text and speak to the user
+					//speak to the user
 					tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
 					Log.d("TrTS", "onRecieve success!");
 				}
@@ -80,7 +80,6 @@ public class TrackToSpeechService extends Service implements OnInitListener {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -104,6 +103,14 @@ public class TrackToSpeechService extends Service implements OnInitListener {
 	@Override
 	public void onInit(int initStatus) {
 		this.initStatus = initStatus;
+	}
+	
+	/**
+	 * Simple getter for the static fields representing the artist and track currently playing.
+	 * @return A String describing the current artist and track in the format 'artist\ntrack'
+	 */
+	public String getCurrentPlaying() {
+		return currentArtist + "\n" + currentTrack;
 	}
 
 }
