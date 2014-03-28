@@ -1,6 +1,8 @@
 package uk.co.jordanrobinson.tracktospeech;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -46,21 +48,10 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		Log.d("TrTS", "Starting up...");	
-//
-//		numMessages = 0;
-//
-//		//setup of background components
-//		final IntentFilter intentFilter = new IntentFilter();
-//
-//		intentFilter.addAction("com.android.music.metachanged");
-//		intentFilter.addAction("com.android.music.playstatechanged");
-//
-//		registerReceiver(broadcastReceiver, intentFilter);
-//
-//		tts = new TextToSpeech(this, this);
 		
-		startService(new Intent(this, TrackToSpeechService.class));
+		final Intent intent = new Intent(this, TrackToSpeechService.class);
+		
+		startService(intent);
 
 		//setup of graphical components
 		//set overall layout 
@@ -85,42 +76,41 @@ public class MainActivity extends FragmentActivity {
 		toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-//					registerReceiver(broadcastReceiver, intentFilter); //we default to checked
-//					outputTextView.setText("Waiting For Track");
-//
-//					mNotifyBuilder.setContentText("Service is currently running")
-//					.setNumber(++numMessages);
-//					mNotificationManager.notify(2, mNotifyBuilder.build());
-//
-//					enabled = true;
+					if (isServiceRunning()) {						
+						startService(intent);
+					}
+					outputTextView.setText("Waiting For Track");
+
+					mNotifyBuilder.setContentText("Service is currently running")
+					.setNumber(++numMessages);
+					mNotificationManager.notify(2, mNotifyBuilder.build());
+
+					enabled = true;
 				} else {
-//					unregisterReceiver(broadcastReceiver);
-//					outputTextView.setText("Service Turned Off");
-//
-//					mNotifyBuilder.setContentText("Service is not running")
-//					.setNumber(++numMessages);
-//					mNotificationManager.notify(1, mNotifyBuilder.build());
-//
-//					enabled = false;
+					stopService(intent);
+					outputTextView.setText("Service Turned Off");
+
+					mNotifyBuilder.setContentText("Service is not running")
+					.setNumber(++numMessages);
+					mNotificationManager.notify(1, mNotifyBuilder.build());
+
+					enabled = false;
 				}
 			}
 		});
 
 		displayNotifier();
 	}
-
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-//		Log.d("TrTS", "onResume called...");
-//		if (currentArtist != null && currentTrack != null) {
-//			outputTextView.setText(currentArtist + "\n" + currentTrack);
-//			Log.d("TrTS", "Setting text from last time");
-//		}
-//		else {
-//			outputTextView.setText("Waiting For Track");
-//		}
-//	}
+	
+	private boolean isServiceRunning() {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (TrackToSpeechService.class.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 
 	@Override
 	protected void onPause() {
@@ -175,9 +165,4 @@ public class MainActivity extends FragmentActivity {
 		super.onDestroy();
 		Log.d("TrTS", "onDestroy called...");
 	}
-
-//	@Override
-//	public void onInit(int initStatus) {
-//		this.initStatus = initStatus;
-//	}
 }
