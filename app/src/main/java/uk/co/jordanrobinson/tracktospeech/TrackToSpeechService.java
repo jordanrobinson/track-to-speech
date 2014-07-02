@@ -1,8 +1,5 @@
 package uk.co.jordanrobinson.tracktospeech;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +10,9 @@ import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class TrackToSpeechService extends Service implements OnInitListener {
 	
