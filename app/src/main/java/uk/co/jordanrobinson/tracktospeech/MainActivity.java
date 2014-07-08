@@ -22,147 +22,148 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends FragmentActivity {
 
-	protected static boolean showNotifier = true;
+    protected static boolean showNotifier = true;
 
-	private int numMessages;
-	private boolean enabled = true;
-	private TextView outputTextView;
+    private int numMessages;
+    private boolean enabled = true;
+    private TextView outputTextView;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getTitle().equals("Settings")) {
-			Log.d("TrTS", "attempting init Settings");
-			Intent intent = new Intent(this, PrefsActivity.class);
-			startActivity(intent);
-		}
-		return true;
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().equals("Settings")) {
+            Log.d("TrTS", "attempting init Settings");
+            Intent intent = new Intent(this, PrefsActivity.class);
+            startActivity(intent);
+        }
+        return true;
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		final Intent intent = new Intent(this, TrackToSpeechService.class);
-		
-		startService(intent);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		//setup of graphical components
-		//set overall layout 
-		setContentView(R.layout.activity_main);
+        final Intent intent = new Intent(this, TrackToSpeechService.class);
 
-		//set text view to show track and artist
-		outputTextView = (TextView) ((Activity) this).findViewById(R.id.track_view);
+        startService(intent);
 
-		//set toggle button for service
-		ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
+        //setup of graphical components
+        //set overall layout
+        setContentView(R.layout.activity_main);
 
-		//set width to the longest text width it can use (stops it resizing for different text)
-		toggleButton.setWidth((int) toggleButton.getPaint().measureText("Service Off") + 
-				toggleButton.getPaddingLeft() + toggleButton.getPaddingRight());
-		toggleButton.setChecked(true);
+        //set text view to show track and artist
+        outputTextView = (TextView) ((Activity) this).findViewById(R.id.track_view);
 
-		final NotificationManager mNotificationManager =
-				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		final NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this);
+        //set toggle button for service
+        ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
 
-		//hook up button functionality
-		toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
-					if (isServiceRunning()) {						
-						startService(intent);
-					}
-					outputTextView.setText("Waiting For Track");
+        //set width to the longest text width it can use (stops it resizing for different text)
+        toggleButton.setWidth((int) toggleButton.getPaint().measureText("Service Off") +
+                toggleButton.getPaddingLeft() + toggleButton.getPaddingRight());
+        toggleButton.setChecked(true);
 
-					mNotifyBuilder.setContentText("Service is currently running")
-					.setNumber(++numMessages);
-					mNotificationManager.notify(2, mNotifyBuilder.build());
+        final NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        final NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this);
 
-					enabled = true;
-				} else {
-					stopService(intent);
-					outputTextView.setText("Service Turned Off");
+        //hook up button functionality
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Log.d("TrTS", "Starting service");
+                    startService(intent);
 
-					mNotifyBuilder.setContentText("Service is not running")
-					.setNumber(++numMessages);
-					mNotificationManager.notify(1, mNotifyBuilder.build());
+                    outputTextView.setText("Waiting For Track");
 
-					enabled = false;
-				}
-			}
-		});
+                    mNotifyBuilder.setContentText("Service is currently running")
+                            .setNumber(++numMessages);
 
-		displayNotifier();
-	}
-	
-	private boolean isServiceRunning() {
-	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if (TrackToSpeechService.class.getName().equals(service.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
+                    enabled = true;
+                    displayNotifier();
+                } else {
+                    Log.d("TrTS", "Stopping service");
+                    stopService(intent);
+                    outputTextView.setText("Service Turned Off");
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-	}
+                    mNotifyBuilder.setContentText("Service is not running")
+                            .setNumber(++numMessages);
+                    mNotificationManager.notify(0, mNotifyBuilder.build());
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		Log.d("TrTS", "OnNewIntent called...");
-		onResume();
-	}
+                    enabled = false;
+                }
+            }
+        });
 
-	protected void displayNotifier() {
+        displayNotifier();
+    }
 
-		String contentText = "Service is currently running";
+    private boolean isServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (TrackToSpeechService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		if (!enabled) {
-			contentText = "Service is not running";
-		}
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
-		Intent resultIntent = new Intent(this, MainActivity.class);		
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("TrTS", "OnNewIntent called...");
+        onResume();
+    }
 
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-		.setSmallIcon(R.drawable.ic_stat_notify)
-		.setContentTitle("Track to Speech")
-		.setContentText(contentText);
+    protected void displayNotifier() {
 
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		stackBuilder.addParentStack(NotificationActivity.class);
-		stackBuilder.addNextIntent(resultIntent);
+        String contentText = "Service is currently running";
 
-		PendingIntent resultPendingIntent = 
-				PendingIntent.getActivity(
-						this,
-						0,
-						resultIntent,
-						PendingIntent.FLAG_UPDATE_CURRENT
-						);
+        if (!enabled) {
+            contentText = "Service is not running";
+        }
 
-		mBuilder.setContentIntent(resultPendingIntent);
+        Intent resultIntent = new Intent(this, MainActivity.class);
 
-		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_stat_notify)
+                .setContentTitle("Track to Speech")
+                .setContentText(contentText);
 
-		Notification notification = mBuilder.build();
-		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		notificationManager.notify(0, notification);
-	}
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(NotificationActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		Log.d("TrTS", "onDestroy called...");
-	}
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Notification notification = mBuilder.build();
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notificationManager.notify(0, notification);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("TrTS", "onDestroy called...");
+    }
 }
