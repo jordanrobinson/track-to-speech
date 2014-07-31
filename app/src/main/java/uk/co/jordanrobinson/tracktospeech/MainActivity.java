@@ -81,11 +81,15 @@ public class MainActivity extends FragmentActivity {
 
                     outputTextView.setText("Waiting For Track");
 
+                    Log.d("TrTS", "Current notifier state: " + showNotifier);
+
                     mNotifyBuilder.setContentText("Service is currently running")
                             .setNumber(++numMessages);
 
                     enabled = true;
-                    displayNotifier();
+                    if (showNotifier) {
+                        displayNotifier();
+                    }
                 } else {
                     Log.d("TrTS", "Stopping service");
                     stopService(intent);
