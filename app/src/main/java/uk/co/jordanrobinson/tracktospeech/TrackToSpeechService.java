@@ -59,6 +59,7 @@ public class TrackToSpeechService extends Service implements OnInitListener {
 
                     //speak to the user
                     tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
+                    MainActivity.outputTextView.setText(artist + " - " + track);
                     Log.d("TrTS", "onRecieve success!");
                 }
                 else {

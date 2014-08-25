@@ -26,7 +26,7 @@ public class MainActivity extends FragmentActivity {
 
     private int numMessages;
     private boolean enabled = true;
-    private TextView outputTextView;
+    public static TextView outputTextView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
