@@ -9,6 +9,13 @@ All you need to do is start the service, and play music. Track to Speech will an
 
 Currently a work in progress.
 
+Play Store
+==========
+
+Track to speech is now on the play store, too, so you don't have to build it yourself.
+
+[It can be found here!](https://play.google.com/store/apps/details?id=uk.co.jordanrobinson.tracktospeech)
+
 Contributions
 =============
 
