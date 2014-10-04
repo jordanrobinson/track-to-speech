@@ -22,6 +22,21 @@ public class TrackToSpeechService extends Service implements OnInitListener {
     private static String currentArtist = null;
     private static String currentTrack = null;
 
+    private static final String[] PLAYER_INTENTS = {"com.android.music.metachanged",
+            "com.android.music.playstatechanged",
+            "com.android.music.metadatachanged",
+            "com.spotify.music.metadatachanged",
+            "com.dp.ezfolderplayer.free.musicservicecommand",
+            "com.dp.ezfolderplayer.free.musicservicecommand.togglepause",
+            "com.dp.ezfolderplayer.free.musicservicecommand.pause",
+            "com.dp.ezfolderplayer.free.musicservicecommand.next",
+            "com.dp.ezfolderplayer.free.musicservicecommand.previous",
+            "com.dp.ezfolderplayer.free.musicservicecommand.cyclerepeat",
+            "com.dp.ezfolderplayer.free.musicservicecommand.notificationtogglepause",
+            "com.dp.ezfolderplayer.free.metachanged",
+            "com.dp.ezfolderplayer.free.playstatechanged"
+    };
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
@@ -34,6 +49,7 @@ public class TrackToSpeechService extends Service implements OnInitListener {
             if (bundle != null) {
                 Set<String> keys = bundle.keySet();
                 Iterator<String> it = keys.iterator();
+                Log.d("TrTS bundle output", action);
                 Log.d("TrTS bundle output", "Dumping Intent start");
                 while (it.hasNext()) {
                     String key = it.next();
@@ -93,8 +109,9 @@ public class TrackToSpeechService extends Service implements OnInitListener {
         //setup of background components
         final IntentFilter intentFilter = new IntentFilter();
 
-        intentFilter.addAction("com.android.music.metachanged");
-        intentFilter.addAction("com.android.music.playstatechanged");
+        for (int i = 0; i < PLAYER_INTENTS.length; i++) {
+            intentFilter.addAction(PLAYER_INTENTS[i]);
+        }
 
         registerReceiver(broadcastReceiver, intentFilter);
 
