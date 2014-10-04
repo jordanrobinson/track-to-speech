@@ -11,8 +11,12 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+
+import uk.co.jordanrobinson.tracktospeech.handlers.GooglePlayMusic;
+import uk.co.jordanrobinson.tracktospeech.handlers.PlayerHandler;
 
 public class TrackToSpeechService extends Service implements OnInitListener {
 
@@ -37,55 +41,15 @@ public class TrackToSpeechService extends Service implements OnInitListener {
             "com.dp.ezfolderplayer.free.playstatechanged"
     };
 
+    private static ArrayList<PlayerHandler> handlers;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("TrTS", "onRecieve Called...");
-
-            String action = intent.getAction();
-
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                Set<String> keys = bundle.keySet();
-                Iterator<String> it = keys.iterator();
-                Log.d("TrTS bundle output", action);
-                Log.d("TrTS bundle output", "Dumping Intent start");
-                while (it.hasNext()) {
-                    String key = it.next();
-                    Log.d("TrTS bundle output", "[" + key + "=" + bundle.get(key)+ "]");
-                }
-                Log.d("TrTS bundle output", "Dumping Intent end");
-
-                //for our use, these are essentially the same
-                playstate = (bundle.getBoolean("playstate") || bundle.getBoolean("playing"));
-                Log.d("TrTS playstate", playstate + "");
-            }
-
-            if (initStatus == TextToSpeech.SUCCESS && playstate) { //TTS is initialised, and we're actually playing
-                String command = intent.getStringExtra("command"); //so log what's going on
-                String artist = intent.getStringExtra("artist");
-                String track = intent.getStringExtra("track");
-                Log.d("TrTS track output", artist + " - " + track);
-                Log.d("TrTS action output", action + " -  " + command);
-
-                if (!artist.equals(currentArtist) || !track.equals(currentTrack)) { //if we haven't already
-                    currentArtist = artist;
-                    currentTrack = track;
-
-                    //speak to the user
-                    tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
-                    MainActivity.outputTextView.setText(artist + " - " + track);
-                    Log.d("TrTS", "onRecieve success!");
-                }
-                else {
-                    Log.d("TrTS", "onRecieve failed on artist comparison. Artist = "
-                            + artist + " + " + currentArtist + " Track = " + track + " + " + currentTrack);
-                }
-            }
-            else {
-                Log.d("TrTS", "onRecieve failed on tts Success & playstate. Playstate = "
-                        + playstate + " tts = " + (initStatus == TextToSpeech.SUCCESS));
+            for (int i = 0; i < handlers.size(); i++) {
+                handlers.get(i).handle(intent);
             }
         }
     };
@@ -113,9 +77,14 @@ public class TrackToSpeechService extends Service implements OnInitListener {
             intentFilter.addAction(PLAYER_INTENTS[i]);
         }
 
-        registerReceiver(broadcastReceiver, intentFilter);
-
         tts = new TextToSpeech(this, this);
+
+        handlers = new ArrayList<PlayerHandler>();
+
+        GooglePlayMusic googlePlayMusic = new GooglePlayMusic(tts, initStatus, playstate, currentArtist, currentTrack);
+        handlers.add(googlePlayMusic);
+
+        registerReceiver(broadcastReceiver, intentFilter);
     }
 
     @Override
