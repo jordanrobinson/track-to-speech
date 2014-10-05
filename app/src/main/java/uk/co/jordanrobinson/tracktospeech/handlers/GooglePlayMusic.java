@@ -13,19 +13,8 @@ public class GooglePlayMusic extends PlayerHandler {
             "com.android.music.playstatechanged",
             "com.android.music.metadatachanged",};
 
-    private TextToSpeech tts;
-    private int initStatus;
-    private boolean playstate;
-    private String currentArtist = null;
-    private String currentTrack = null;
-
-    public GooglePlayMusic(TextToSpeech tts, int initStatus, boolean playstate,
-                           String currentArtist, String currentTrack) {
-        this.tts = tts;
-        this.initStatus = initStatus;
-        this.playstate = playstate;
-        this.currentArtist = currentArtist;
-        this.currentTrack = currentTrack;
+    public GooglePlayMusic(TextToSpeech tts, int initStatus, boolean playstate, String currentArtist, String currentTrack) {
+        super(tts, initStatus, playstate, currentArtist, currentTrack);
     }
 
     @Override

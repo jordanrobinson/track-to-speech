@@ -5,18 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
 
+import uk.co.jordanrobinson.tracktospeech.handlers.EZFolderPlayer;
 import uk.co.jordanrobinson.tracktospeech.handlers.GooglePlayMusic;
 import uk.co.jordanrobinson.tracktospeech.handlers.PlayerHandler;
+import uk.co.jordanrobinson.tracktospeech.handlers.Spotify;
 
 public class TrackToSpeechService extends Service implements OnInitListener {
 
@@ -30,13 +29,7 @@ public class TrackToSpeechService extends Service implements OnInitListener {
             "com.android.music.playstatechanged",
             "com.android.music.metadatachanged",
             "com.spotify.music.metadatachanged",
-            "com.dp.ezfolderplayer.free.musicservicecommand",
-            "com.dp.ezfolderplayer.free.musicservicecommand.togglepause",
-            "com.dp.ezfolderplayer.free.musicservicecommand.pause",
-            "com.dp.ezfolderplayer.free.musicservicecommand.next",
-            "com.dp.ezfolderplayer.free.musicservicecommand.previous",
-            "com.dp.ezfolderplayer.free.musicservicecommand.cyclerepeat",
-            "com.dp.ezfolderplayer.free.musicservicecommand.notificationtogglepause",
+            "com.spotify.music.playbackstatechanged",
             "com.dp.ezfolderplayer.free.metachanged",
             "com.dp.ezfolderplayer.free.playstatechanged"
     };
@@ -82,7 +75,12 @@ public class TrackToSpeechService extends Service implements OnInitListener {
         handlers = new ArrayList<PlayerHandler>();
 
         GooglePlayMusic googlePlayMusic = new GooglePlayMusic(tts, initStatus, playstate, currentArtist, currentTrack);
+        EZFolderPlayer ezFolderPlayer = new EZFolderPlayer(tts, initStatus, playstate, currentArtist, currentTrack);
+        Spotify spotify = new Spotify(tts, initStatus, playstate, currentArtist, currentTrack);
+
         handlers.add(googlePlayMusic);
+        handlers.add(ezFolderPlayer);
+        handlers.add(spotify);
 
         registerReceiver(broadcastReceiver, intentFilter);
     }
