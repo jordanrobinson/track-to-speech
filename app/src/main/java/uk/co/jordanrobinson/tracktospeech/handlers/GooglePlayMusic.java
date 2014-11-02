@@ -50,7 +50,7 @@ public class GooglePlayMusic extends PlayerHandler {
 
                     //speak to the user
                     tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
-                    MainActivity.outputTextView.setText(artist + " - " + track);
+                    MainActivity.outputTextView.setText(artist + " \n " + track);
                     Log.d("TrTS", "onRecieve success!");
                 }
                 else {

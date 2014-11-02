@@ -8,8 +8,8 @@ android {
         applicationId "uk.co.jordanrobinson.tracktospeech"
         minSdkVersion 13
         targetSdkVersion 13
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
     }
     buildTypes {
         release {

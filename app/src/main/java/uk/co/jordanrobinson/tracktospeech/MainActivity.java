@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -61,7 +62,8 @@ public class MainActivity extends FragmentActivity {
         outputTextView = (TextView) ((Activity) this).findViewById(R.id.track_view);
 
         //set toggle button for service
-        ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
+        final ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
+        final ImageView logo = (ImageView) this.findViewById(R.id.header);
 
         //set width to the longest text width it can use (stops it resizing for different text)
         toggleButton.setWidth((int) toggleButton.getPaint().measureText("Service Off") +
@@ -90,6 +92,7 @@ public class MainActivity extends FragmentActivity {
                     if (showNotifier) {
                         displayNotifier();
                     }
+                    logo.setImageResource(R.drawable.logo);
                 } else {
                     Log.d("TrTS", "Stopping service");
                     stopService(intent);
@@ -100,6 +103,7 @@ public class MainActivity extends FragmentActivity {
                     mNotificationManager.notify(0, mNotifyBuilder.build());
 
                     enabled = false;
+                    logo.setImageResource(R.drawable.logoinactive);
                 }
             }
         });
