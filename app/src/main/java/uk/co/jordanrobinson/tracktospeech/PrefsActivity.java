@@ -25,7 +25,6 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
 				MainActivity.showNotifier = false;
 			}
 			else {
-				//TODO: show the notification...
 				MainActivity.showNotifier = true;
 			}
 		}

@@ -8,5 +8,8 @@
     <!-- settings strings -->
     <string name="pref_notify">Notification Icon</string>
     <string name="pref_notify_summ">Shows a notification icon when the service is running</string>
+    <string name="pref_pattern">Speech Pattern</string>
+    <string name="pref_pattern_summ">Configures the order in which the announcement is made</string>
+
 
 </resources>
