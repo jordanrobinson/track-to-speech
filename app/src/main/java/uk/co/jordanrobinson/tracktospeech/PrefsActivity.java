@@ -18,7 +18,7 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if ("notification_icon".equals(key)) {
+		if (getString(R.string.pref_notify_key).equals(key)) {
 			if (MainActivity.showNotifier) {
 				NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 				notificationManager.cancel(0);
@@ -28,6 +28,8 @@ public class PrefsActivity extends PreferenceActivity implements SharedPreferenc
 				MainActivity.showNotifier = true;
 			}
 		}
+        else if (getString(R.string.pref_pattern_key).equals(key)) {
+            //TODO: pattern logic
+        }
 	}
-
 }
