@@ -4,7 +4,7 @@
         <item>"Artist - Track"</item>
         <item>"Track - Artist"</item>
     </string-array>
-    <string-array name="pattern-values">
+    <string-array name="patternValues">
         <item>"artist,track"</item>
         <item>"track,artist"</item>
     </string-array>

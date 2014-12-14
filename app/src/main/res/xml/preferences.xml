@@ -11,7 +11,7 @@
         android:title="@string/pref_notify"
         android:summary="@string/pref_notify_summ"
         android:entries="@array/patterns"
-        android:entryValues="@array/pattern-values"
+        android:entryValues="@array/patternValues"
         />
 
 </PreferenceScreen>
