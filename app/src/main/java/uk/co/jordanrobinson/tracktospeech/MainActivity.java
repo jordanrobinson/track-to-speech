@@ -99,7 +99,8 @@ public class MainActivity extends FragmentActivity {
                     outputTextView.setText("Service Turned Off");
 
                     mNotifyBuilder.setContentText("Service is not running")
-                            .setNumber(++numMessages);
+                            .setNumber(++numMessages)
+                            .setSmallIcon(R.drawable.logo);
                     mNotificationManager.notify(0, mNotifyBuilder.build());
 
                     enabled = false;
