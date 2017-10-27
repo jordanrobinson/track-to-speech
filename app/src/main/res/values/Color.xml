@@ -141,4 +141,7 @@
     <color name="Navy">#000080</color>
     <color name="Black">#000000</color>
     <color name="TrtsBlue">#8294c8</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>

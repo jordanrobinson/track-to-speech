@@ -1,5 +1,6 @@
 package uk.co.jordanrobinson.tracktospeech.handlers;
 
+import android.content.Context;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -8,13 +9,13 @@ import uk.co.jordanrobinson.tracktospeech.MainActivity;
 
 public class EZFolderPlayer extends PlayerHandler {
 
-    public static final String PLAYBACK = "com.dp.ezfolderplayer.free.playstatechanged";
-    public static final String METADATA_CHANGE = "com.dp.ezfolderplayer.free.metachanged";
+    private static final String PLAYBACK = "com.dp.ezfolderplayer.free.playstatechanged";
+    private static final String METADATA_CHANGE = "com.dp.ezfolderplayer.free.metachanged";
 
-    public static final String[] IDENTIFIERS = {PLAYBACK, METADATA_CHANGE};
+    private static final String[] IDENTIFIERS = {PLAYBACK, METADATA_CHANGE};
 
-    public Intent metadataIntent;
-    public Intent playstateIntent;
+    private Intent metadataIntent;
+    private Intent playstateIntent;
 
     public EZFolderPlayer(TextToSpeech tts, int initStatus, boolean playstate, String currentArtist, String currentTrack) {
         super(tts, initStatus, playstate, currentArtist, currentTrack);
@@ -22,20 +23,19 @@ public class EZFolderPlayer extends PlayerHandler {
 
 
     @Override
-    public void handle(Intent intent) {
+    public void handle(Context context, Intent intent) {
         boolean handle = false;
-        for (int i = 0; i < IDENTIFIERS.length; i++) {
-            if (IDENTIFIERS[i].equals(intent.getAction())) {
+        for (String IDENTIFIER : IDENTIFIERS) {
+            if (IDENTIFIER.equals(intent.getAction())) {
                 handle = true;
                 break;
-            }
-            else {
-                Log.d("TrTS", "didn't match: " + intent.getAction() + " to " + IDENTIFIERS[i]);
+            } else {
+                Log.d("TrTS", "didn't match: " + intent.getAction() + " to " + IDENTIFIER);
             }
         }
 
         if (handle) {
-            super.handle(intent);
+            super.handle(context, intent);
 
             String action = intent.getAction();
 
@@ -59,6 +59,7 @@ public class EZFolderPlayer extends PlayerHandler {
                         //speak to the user
                         tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
                         MainActivity.outputTextView.setText(artist + " - " + track);
+                        MainActivity.history.add(artist + " - " + track);
                         Log.d("TrTS", "onRecieve success!");
                     }
                     else {

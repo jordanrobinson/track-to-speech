@@ -1,13 +1,14 @@
 package uk.co.jordanrobinson.tracktospeech;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
@@ -15,10 +16,14 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends FragmentActivity {
@@ -28,6 +33,8 @@ public class MainActivity extends FragmentActivity {
     private int numMessages;
     private boolean enabled = true;
     public static TextView outputTextView;
+    public static ListView listView;
+    public static List<String> history;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,11 +66,22 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         //set text view to show track and artist
-        outputTextView = (TextView) ((Activity) this).findViewById(R.id.track_view);
+        outputTextView = this.findViewById(R.id.track_view);
+
+        if (history == null) {
+            history = new ArrayList<>();
+        }
+
+        listView = findViewById(R.id.history_list);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                history);
+
+        listView.setAdapter(arrayAdapter);
 
         //set toggle button for service
-        final ToggleButton toggleButton = (ToggleButton) this.findViewById(R.id.on_off_toggle);
-        final ImageView logo = (ImageView) this.findViewById(R.id.header);
+        final ToggleButton toggleButton = this.findViewById(R.id.on_off_toggle);
 
         //set width to the longest text width it can use (stops it resizing for different text)
         toggleButton.setWidth((int) toggleButton.getPaint().measureText("Service Off") +
@@ -72,6 +90,10 @@ public class MainActivity extends FragmentActivity {
 
         final NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel("trts", "trts-channel", NotificationManager.IMPORTANCE_MIN);
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
         final NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(this);
 
         //hook up button functionality
@@ -92,7 +114,6 @@ public class MainActivity extends FragmentActivity {
                     if (showNotifier) {
                         displayNotifier();
                     }
-                    logo.setImageResource(R.drawable.logo);
                 } else {
                     Log.d("TrTS", "Stopping service");
                     stopService(intent);
@@ -104,7 +125,6 @@ public class MainActivity extends FragmentActivity {
                     mNotificationManager.notify(0, mNotifyBuilder.build());
 
                     enabled = false;
-                    logo.setImageResource(R.drawable.logoinactive);
                 }
             }
         });

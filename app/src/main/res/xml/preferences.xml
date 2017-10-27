@@ -6,12 +6,12 @@
         android:summary="@string/pref_notify_summ"
         android:defaultValue="true" />
 
-    <ListPreference
-        android:key="speech_pattern"
-        android:title="@string/pref_notify"
-        android:summary="@string/pref_notify_summ"
-        android:entries="@array/patterns"
-        android:entryValues="@array/patternValues"
-        />
+    <!--<ListPreference-->
+        <!--android:key="speech_pattern"-->
+        <!--android:title="@string/pref_notify"-->
+        <!--android:summary="@string/pref_notify_summ"-->
+        <!--android:entries="@array/patterns"-->
+        <!--android:entryValues="@array/patternValues"-->
+        <!--/>-->
 
 </PreferenceScreen>

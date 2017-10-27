@@ -1,5 +1,6 @@
 package uk.co.jordanrobinson.tracktospeech.handlers;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -18,7 +19,7 @@ public class GooglePlayMusic extends PlayerHandler {
     }
 
     @Override
-    public void handle(Intent intent) {
+    public void handle(Context context, Intent intent) {
         boolean handle = false;
         for (int i = 0; i < IDENTIFIERS.length; i++) {
             if (IDENTIFIERS[i].equals(intent.getAction())) {
@@ -28,7 +29,7 @@ public class GooglePlayMusic extends PlayerHandler {
         }
 
         if (handle) {
-            super.handle(intent);
+            super.handle(context, intent);
 
             String action = intent.getAction();
 
@@ -51,6 +52,8 @@ public class GooglePlayMusic extends PlayerHandler {
                     //speak to the user
                     tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
                     MainActivity.outputTextView.setText(artist + " \n " + track);
+                    MainActivity.history.add(artist + " - " + track);
+                    updateHistory(context);
                     Log.d("TrTS", "onRecieve success!");
                 }
                 else {

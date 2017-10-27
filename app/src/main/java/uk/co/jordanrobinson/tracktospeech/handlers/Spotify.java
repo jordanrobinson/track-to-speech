@@ -1,5 +1,6 @@
 package uk.co.jordanrobinson.tracktospeech.handlers;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -9,13 +10,13 @@ import uk.co.jordanrobinson.tracktospeech.MainActivity;
 
 public class Spotify extends PlayerHandler {
 
-    public static final String PLAYBACK = "com.spotify.music.playbackstatechanged";
-    public static final String METADATA_CHANGE = "com.spotify.music.metadatachanged";
+    private static final String PLAYBACK = "com.spotify.music.playbackstatechanged";
+    private static final String METADATA_CHANGE = "com.spotify.music.metadatachanged";
 
-    public static final String[] IDENTIFIERS = {PLAYBACK, METADATA_CHANGE};
+    private static final String[] IDENTIFIERS = {PLAYBACK, METADATA_CHANGE};
 
-    public Intent metadataIntent;
-    public Intent playstateIntent;
+    private Intent metadataIntent;
+    private Intent playstateIntent;
 
     public Spotify(TextToSpeech tts, int initStatus, boolean playstate, String currentArtist, String currentTrack) {
         super(tts, initStatus, playstate, currentArtist, currentTrack);
@@ -24,17 +25,17 @@ public class Spotify extends PlayerHandler {
     }
 
     @Override
-    public void handle(Intent intent) {
+    public void handle(Context context, Intent intent) {
         boolean handle = false;
-        for (int i = 0; i < IDENTIFIERS.length; i++) {
-            if (IDENTIFIERS[i].equals(intent.getAction())) {
+        for (String IDENTIFIER : IDENTIFIERS) {
+            if (IDENTIFIER.equals(intent.getAction())) {
                 handle = true;
                 break;
             }
         }
 
         if (handle) {
-            super.handle(intent);
+            super.handle(context, intent);
 
             String action = intent.getAction();
             Bundle bundle = intent.getExtras();
@@ -60,6 +61,7 @@ public class Spotify extends PlayerHandler {
                         //speak to the user
                         tts.speak(artist + ", " + track, TextToSpeech.QUEUE_FLUSH, null);
                         MainActivity.outputTextView.setText(artist + " - " + track);
+                        MainActivity.history.add(artist + " - " + track);
                         Log.d("TrTS", "onRecieve success!");
                     }
                     else {

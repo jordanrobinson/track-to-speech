@@ -25,7 +25,8 @@ public class TrackToSpeechService extends Service implements OnInitListener {
     private static String currentArtist = null;
     private static String currentTrack = null;
 
-    private static final String[] PLAYER_INTENTS = {"com.android.music.metachanged",
+    private static final String[] PLAYER_INTENTS = {
+            "com.android.music.metachanged",
             "com.android.music.playstatechanged",
             "com.android.music.metadatachanged",
             "com.spotify.music.metadatachanged",
@@ -42,7 +43,7 @@ public class TrackToSpeechService extends Service implements OnInitListener {
         public void onReceive(Context context, Intent intent) {
             Log.d("TrTS", "onRecieve Called...");
             for (int i = 0; i < handlers.size(); i++) {
-                handlers.get(i).handle(intent);
+                handlers.get(i).handle(context, intent);
             }
         }
     };
@@ -66,13 +67,13 @@ public class TrackToSpeechService extends Service implements OnInitListener {
         //setup of background components
         final IntentFilter intentFilter = new IntentFilter();
 
-        for (int i = 0; i < PLAYER_INTENTS.length; i++) {
-            intentFilter.addAction(PLAYER_INTENTS[i]);
+        for (String PLAYER_INTENT : PLAYER_INTENTS) {
+            intentFilter.addAction(PLAYER_INTENT);
         }
 
         tts = new TextToSpeech(this, this);
 
-        handlers = new ArrayList<PlayerHandler>();
+        handlers = new ArrayList<>();
 
         GooglePlayMusic googlePlayMusic = new GooglePlayMusic(tts, initStatus, playstate, currentArtist, currentTrack);
         EZFolderPlayer ezFolderPlayer = new EZFolderPlayer(tts, initStatus, playstate, currentArtist, currentTrack);
